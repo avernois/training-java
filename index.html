@@ -83,6 +83,521 @@
 
                 <section>
                     <section>
+                        <h1>Maven</h1>
+                    </section>  
+                    <section>
+                        <h2>maven, un outil</h2>
+                        <ul>
+                            <li>de build</li>
+                            <li>de gestion de dépendance</li>
+                            <li>de documentation</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Simple POM</h2>
+                        <pre><code class="xml" data-trim contenteditable>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+        http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.craftinglabs.training</groupId>
+  <artifactId>my-app</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>My awesome project</name>
+</project>
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Sources structure</h2>
+                        <pre><code class="xml" data-trim contenteditable>
+my-app
++- pom.xml
+  +- src
+    +- main
+    | +- java
+    | +- resources
+    +- test
+      +- java
+      +- resources
+
+                        </code></pre>
+                    </section>
+                    <section><h2>ajouter des dépendances</h2>
+                        <pre><code class="xml" contenteditable>
+<project>
+    <!-- snip -->
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
+                        </code></pre>
+                        <p>3 types de scope</p>
+                        <ul>
+                            <li>compile</li>
+                            <li>test</li>
+                            <li>runtime</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Trouver les dépendances</h2>
+                        <ul>
+                            <li><a href="http://search.maven.org/">http://search.maven.org/</a></li>
+                            <li><a href="http://mvnrepository.com/">http://mvnrepository.com/</a></li>
+                            <li>google marche bien aussi :)</li>
+                        </ul>
+                        <p>Note: avoir son propre repository manager en interne peut être une bonne idée :)</p>
+                    </section>
+
+                    <section>
+                        <h2>Cycle de vie</h2>
+                        les phases du cycle de vie du build les plus courantes :
+
+                        <ul>
+                            <li>process-resources</li>
+                            <li>compile</li>
+                            <li>test</li>
+                            <li>package</li>
+                            <li>install</li>
+                            <li>deploy</li>
+                        </ul>
+                        <p>Il y en a bien d'autres : <a href="https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html">Doc Maven</a></p>
+                    </section>
+                    <section>
+                        <h2>filtrer les resources</h2>
+                        <p>Remplacer un variable (ex: <code>${nom.variable}</code>) par sa valeur définie dans le pom.
+                        <pre><code class="xml" contenteditable>
+<project>
+    <!-- snip -->
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+</project>
+                        </code></pre>
+                    </section>
+                    <section><h2>définir ses properties</h2>
+                        <p><code>${my.properties}</code></p>
+                        <pre><code class="xml" contenteditable>
+<project>
+    <properties>
+        <my.properties>hello</my.properties>
+    </properties>
+</project>
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>multi modules</h2>
+                        <pre><code class="xml" contenteditable>
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+ 
+  <groupId>fr.craftinglabs.training</groupId>
+  <artifactId>app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+ 
+  <modules>
+    <module>my-app</module>
+    <module>my-webapp</module>
+  </modules>
+</project>
+                        </code></pre>
+                    </section>  
+                    <section>
+                        <h2>structure</h2>
+                        <pre><code class="xml" contenteditable>
++- pom.xml // le pom parent
++- my-app
+| +- pom.xml
+| +- src
+|   +- main
+|     +- java
++- my-webapp
+| +- pom.xml
+| +- src
+|   +- main
+|     +- webapp
+                        </code></pre>
+
+                    </section>
+
+                    <section>
+                        <h2>super pom</h2>
+                        <p>Dans les poms des modules, on rajoute un lien vers le pom parent</p>
+
+                        <pre><code class="xml" contenteditable>
+  <parent>
+    <groupId>fr.craftinglabs.training</groupId>
+    <artifactId>app</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+                        </code></pre>
+                    </section>
+                </section>
+
+               <section>
+                    <section>
+                        <h1>Collections</h1>
+                    </section>
+                    <section><h2>Overview</h2>
+                        sortir le schéma qui va bien :)
+                    </section>
+
+                    <section>
+                        <h2>Iterable</h2>
+                        <p><code>Iterable</code> est l'interface des Collection</p>
+                        <pre><code class="java" data-trim>
+public interface Iterable&lt;T&gt; {
+    Iterator&lt;T&gt; iterator();
+}
+
+public interface Iterator&lt;T&gt; {
+    boolean hasNext();
+    T next();
+    void remove(); // à implémenter uniquement si on le supporte
+}         
+                        </code></pre>
+
+
+                    </section>
+
+                    <section><h2>iterable et for-loop</h2>
+                        <pre><code class="java" data-trim>
+Iterable&lt;AType&gt; iterable = .. ;
+for(AType item : iterable) {
+    doThings();
+}
+                       </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Collection</h2>
+                        <h3>ajout, retrait</h3>
+                        <pre><code class="java" data-trim contenteditable>
+String anElement = "an element";
+Collection collection = new HashSet();
+
+boolean collectionChanged = collection.add(anElement); 
+boolean elementRemoved = collection.remove(anElement);
+
+collection.addAll(aSet); // aSet is a Set :)
+collection.removeAll(aSet);
+collection.retainAll(aSet); // ne garde dans collection que les éléments présent dans aSet.
+                        </code></pre>
+                    </section>
+
+                    <section>   
+                        <h2>List</h2>
+                        <ul>
+                            <li>Collection ordonnée</li>
+                            <li>un élément peut être présent plusieurs fois</li>
+                            <li>implem : ArrayList, LinkedList, Vector, Stack</li>
+                        </ul>
+
+                        <h3>accès</h3>
+                        <pre><code class="java" data-trim contenteditable>
+List&lt;String&gt; listA = new ArrayList&lt;&gt;();
+listA.add("element 1");
+listA.add("element 2");
+
+listA.add(0, "element 0"); // qu'est ce qui se passe ?
+
+listA.remove(0);
+listA.remove("element 1");
+
+                        </code></pre>
+                    </section>
+
+                    <section>   
+                        <h3>Set</h3>
+                        <ul>
+                            <li>un élement ne peut être présent qu'une fois</li>
+                            <li>implem: HashSet, TreeSet, EnumSet, LinkedHashSet</li>
+                        </ul>
+                        <h3>accès</h3>
+
+
+                        <pre><code class="java" data-trim contenteditable>
+Set&lt;String&gt; setA = new HashSet&lt;&gt;();
+
+setA.add("element 0");
+setA.add("element 1");
+setA.add("element 2");
+
+setA.remove("element 0");      
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>SortedSet</h2>
+                        <p>Un type de Set trié automatiquement.</p>
+                        <pre><code class="java" data-trim contenteditable>
+SortedSet&lt;String&gt; setA = new TreeSet&lt;&gt;();
+
+Comparator&lt;String&gt; comparator = new MyComparator&lt;&gt;();
+SortedSet&lt;String&gt; setB = new TreeSet&lt;String&gt;(comparator);                        
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>NavigableSet</h2>
+                        <pre><code class="java" data-trim contenteditable>
+NavigableSet&lt;String&gt original = new TreeSet&lt;&gt;();
+original.add("1");
+original.add("2");
+original.add("3");
+original.add("4");
+
+NavigableSet&lt;String&gt; reverse = original.descendingSet();
+
+NavigableSet&lt;String&gt; headset = original.headSet("3"); // contient 1 et 2
+NavigableSet&lt;String&gt; subset  = original.subSet("1", "3"); // contient 1, et 2
+                        </code></pre>
+                    </section>
+
+
+                    <section>
+                        <h2>Queue</h2>
+                        <p>Comme une liste, sauf que l'objectif est d'ajouter les élements à la fin, et de les rétirer au début.</p>
+                        <h3>accès</h3>
+                        <pre><code class="java" data-trim contenteditable>
+Queue&lt;String &gt; queue = new LinkedList&lt;&gt;();
+
+queue.add("element 0");
+queue.add("element 1");
+queue.add("element 2");
+
+queue.remove(); // retire et retourne "element 0"
+queue.peek(); // retourne "element 0" sans le retirer
+                        </code></pre>
+                    
+
+                    </section>
+
+                    <section>
+                        <h2>DeQue</h2>
+                        <p>Comme une Queue, sauf qu'on peut y accéder des deux côté</p>
+                        <h3>accès</h3>
+                        <pre><code class="java" data-trim contenteditable>
+DeQue&lt;String &gt; dequeue = new LinkedList&lt;&gt;();
+
+deque.add("element 1"); // ajout à la fin
+deque.addFirst("element 0"); // ajout au début
+deque.addLast("element 2"); // ajout à la fin
+
+deque.remove(); // retire et retourne "element 0"
+deque.peek(); // retourne "element 0" sans le retirer
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Stack</h2>
+                        <p>Une stack est une implémentation de List, dont l'objectif est d'être une LIFO.</p>
+                        <pre><code class="java" data-trim contenteditable>
+Stack&lt;String&gt; stack = new Stack&lt;&gt;();
+
+stack.push("1");
+stack.push("2");
+stack.push("3");
+
+String top = stack.peek(); // retourne "3" sans le retirer
+
+int index = stack.search("3"); // retourne 1 ("3" est en tête)
+                               // yep, l'index des stack commence à 1 :)
+
+stack.pop(); //retourne "3" et le retire
+stack.pop(); //retourne "2" ...
+stack.pop(); //retourne "1"
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Map</h2>
+                        Permet de stocker des ensembles clés-valeurs.
+                        Tous les élements sont itérables
+                        <pre><code class="java" data-trim>
+Map&lt;Integer, String&gt> map = new HashMap&lt;&gt;();
+map.put(1, "1");
+String value = map.get(1);
+
+Set&lt;Map.Entry&lt;K, V&gt;&gt; entries = map.entrySet();
+Set&lt; keys = map.keySet();
+Collection&lt;V&gt; values = map.values();
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>SortedMap</h2>
+                        <p>Comme les SortedSet, mais avec des Map :)</p>
+
+                        <h2>NavigableMap</h2>
+                        <p>idem</p>
+                    </section>
+
+                    <section>
+                        <h2>Equals et Hashcode</h2>
+                        <p>Pour que equals() et contains() fonctionne comme on peut s'y attendre sur les listes, il est indispensable de que equals et hashcode des objets contenus soit correctement défini !</p>
+                        <br>
+                        <h3>WARNING !</h3>
+                        <p>equals et hashcode doivent toujours être surchargé ensemble !</p>
+                        <h3>L'unique règle du hashcode</h3>
+                        Si obj1.equals(obj2) alors obj1 et obj2 doivent avoir le même hashcode.
+                    </section>
+
+                    <section>
+                        <h2>Trier les listes</h2>
+                        <p>Collections.sort(List) ou List.sort depuis 1.8</p>
+                        <pre><code class="java" data-trim>
+List&lt;String&gt; list = Arrays.asList("1", "3", "2");
+Collections.sort(list); // tri selon l'ordre naturel
+
+Comparator&lt;String&gt; comparator = new MyStringComparator();
+
+Collections.sort(list, comparator);  
+list.sort(comparator); // 1.8
+                        </code></pre>                      
+                    </section>
+                    <section>
+                        <h2>Comparator</h2>
+
+public interface Comparator&lt;T&gt; {
+    int compare(T object1, T object2);
+}
+
+public class MyStringComparator implements Comparator<String> {
+
+    public int compare(String s1, String s2){
+        int compare;
+       // si s1 > s2, compare > 0
+       // si s1 == s2, compare = 0
+       // si s1 < s2, compare < 0
+       return compare;
+    }
+}
+                    </section>
+
+                    <section>
+                        <h1>Questions / discussions</h1>
+                        <h1>Pratiques</h1>
+                    </section>
+
+                </section>
+
+
+                <section>
+                    <section>
+                        <h1>Lambda</h1>
+                    </section>
+
+                    <section>
+                        <h2>en java 7</h2>
+                        <pre><code class="java" data-trim contenteditable>
+public interface StateChangeListener {
+    public void onStateChange(State oldState, State newState);
+}
+--
+public class StateOwner {
+    public void addStateListener(StateChangeListener listener) { ... }
+}
+--
+StateOwner stateOwner = new StateOwner();
+
+stateOwner.addStateListener(new StateChangeListener() {
+    public void onStateChange(State oldState, State newState) {
+        System.out.println("State changed")
+    }
+});                        
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>en java 8</h2>
+                        <pre><code class="java" data-trim contenteditable>
+stateOwner.addStateListener(new StateChangeListener() {
+    public void onStateChange(State oldState, State newState) {
+        System.out.println("State changed")
+    }
+});
+                        </code></pre>
+                        devient                     
+                        <pre><code class="java" data-trim contenteditable>
+stateOwner.addStateListener(
+    (oldState, newState) -> System.out.println("State changed"));
+                        </code></pre>
+                    </section>
+
+
+                    <section>
+                        <h2>Lambda et collections</h2>
+                        <p>On passe par les streams pour relier les deux.</p>
+                        <pre><code class="java" data-trim contenteditable>
+List&lt;String&gt; items = new ArrayList&lt;String&gt;();
+
+items.add("un");
+items.add("deux");
+items.add("trois");
+
+Stream&lt;String&gt; stream = items.stream();
+                        </code></pre>
+                    <p>Ensuite la manipulation se passe en deux phases :</p>
+                    <ul>
+                        <li>la config</li>
+                        <li>la processing</li>
+                    </ul>
+
+                    </section>
+
+                    <section>
+                        <h2>config</h2>
+                        <h3>filter</h3>
+                        <pre><code class="java" data-trim contenteditable>
+stream.filter(item -&gt; item.startWith("u"));
+                        </code></pre>
+                        <h3>map</h3>
+                        <pre><code class="java" data-trim contenteditable>
+stream.map(item -&gt; item.toUpperCase());
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>procession</h2>
+                        <h3>collect</h3>
+                        <pre><code class="java" data-trim contenteditable>
+List&lt;String&gt; strings = stream.map(item -&gt; item.toUpperCase())
+                                   .collect(Collectors.toList());
+                        </code></pre>
+                        <h3>reduce</h3>
+                        <pre><code class="java" data-trim contenteditable>
+String reduced = items.stream()
+        .reduce((acc, item) -> acc + " " + item)
+        .orElse("");
+                        </code></pre>
+                        <h3>min maw</h3>
+                        <pre><code class="java" data-trim contenteditable>
+String shortest = items.stream()
+        .min(Comparator.comparing(item -> item.length()))
+        .orElse("");
+                        </code></pre>
+
+                    </section>
+                </section>
+
+
+
+                <section>
+                    <section>
                         <h1>Debugger</h1>
                     </section>
                 </section>
@@ -190,18 +705,12 @@ if (author != null) {
 ...
                         </code></pre>
                     </section>
+                    <section><h2>Accès : à la compil</h2>
+                        
+                    </section>
                 </section>
 
-                <section>
-                    <section>
-                        <h1>Collections</h1>
-                    </section>
-                </section>
-                <section>
-                    <section>
-                        <h1>Lambda et streams</h1>
-                    </section>
-                </section>
+ 
                 <section>
                     <section><h2>(N)IO(2)</h2></section>
                 </section>
