@@ -681,12 +681,12 @@ someStaticField.set(null, value);
                     <section>
                         <h2>Methods</h2>
                         <pre><code class="java" data-trim contenteditable>
-Methods[] methods = helloClass.getMethods();
+Method[] methods = helloClass.getMethods();
 
-// si HelloWorld a une methode myMethodName(String param)
-Method method = helloClass.getMethod("myMethodName", String.class)
+// si HelloWorld a une methode myMethodName(String param);
+Method method = helloClass.getMethod("myMethodName", String.class);
 
-Class returnType = method.getReturnedType();
+Class returnType = method.getReturnType();
 Class[] paramTypes = method.getParameterTypes();
 
 
@@ -697,16 +697,16 @@ method.invoke(hello, "first param");
                         <h2>Méthodes et champs privés</h2>
                         <p>Les méthodes getFields, getMethods précédentes ne retourne que les méthodes publiques. Pour toutes les avoir, il faut passer par: </p>
                         <pre><code class="java" data-trim contenteditable>
-    helloClass.getDeclaredMethods();
-    helloClass.getDeclaredMethod("myPrivateMethodName", String.class);
+helloClass.getDeclaredMethods();
+helloClass.getDeclaredMethod("myPrivateMethodName", String.class);
 
-    helloClass.getDeclaredFields();
-    helloClass.getDeclaredField("myPrivateField");
+helloClass.getDeclaredFields();
+helloClass.getDeclaredField("myPrivateField");
                         </code></pre>
                         Pour invoquer une méthode privée ou changer une valeur d'un champ privé, il faut d'abord le rendre visible
                         <pre><code class="java" data-trim contenteditable>
-    aPrivateField.setAccessible(true);
-    aPrivateMethod.setAccessible(true);
+aPrivateField.setAccessible(true);
+aPrivateMethod.setAccessible(true);
                         </code></pre>
                     </section>
                     <section>
@@ -728,9 +728,9 @@ Class stringArrayComponentType = stringArrayClass.getComponentType();
                         <p>Toutes les classes sont chargées par une instance de ClassLoader (pas forcemment la même pour toutes les classes).</p>
                         <p>Les différent ClassLoader d'une application sont organisé de façon hierarchique.</p>
                         <ol>
-                            <li>le CL regarde si la classe est déjà chargé</li>
-                            <li>Si non, il demande à son parent de le faire</li>
-                            <li>si le parent ne rouve pas la classe, il le fait lui même.</li>
+                            <li>le CL regarde si la classe est déjà chargée</li>
+                            <li>si non, il demande à son parent de le faire</li>
+                            <li>si le parent ne trouve pas la classe, il le fait lui même.</li>
                         </ol>
                     </section>
                     <section>
@@ -750,7 +750,7 @@ public class MyClass {
                     <section>
                         <h2>Dynamic reload</h2>
                         <p>Vu que par défaut, un ClassLoader ne recharge pas une classe qu'il a déjà chargée, pour faire du reloading, il faut créer son propre ClassLoader</p>
-                        <p>Sauf que. Une même classe, chargé par deux ClassLoader différent est vu que deux classes distinctes (et non compatible).</p>
+                        <p>Sauf que. Une même classe, chargée par deux ClassLoader différents est vu comme deux classes distinctes (et non compatible).</p>
                     </section>  
                     <section>
                         <h2>Proxy</h2>
@@ -775,7 +775,6 @@ public interface InvocationHandler{
   Object invoke(Object proxy, Method method, Object[] args)
          throws Throwable;
 }
-
                         </code></pre>
                     </section>
                 </section>
