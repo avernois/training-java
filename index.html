@@ -471,12 +471,12 @@ list.sort(comparator); // 1.8
                     </section>
                     <section>
                         <h2>Comparator</h2>
-
+<pre><code class="java" data-trim>
 public interface Comparator&lt;T&gt; {
     int compare(T object1, T object2);
 }
 
-public class MyStringComparator implements Comparator<String> {
+public class MyStringComparator implements Comparator&lt;String&gt; {
 
     public int compare(String s1, String s2){
         int compare;
@@ -486,15 +486,15 @@ public class MyStringComparator implements Comparator<String> {
        return compare;
     }
 }
+</code></pre>
                     </section>
-
-                    <section>
-                        <h1>Questions / discussions</h1>
-                        <h1>Pratiques</h1>
-                    </section>
-
                 </section>
 
+                <section>
+                    <section>
+                        <h1>Generics et collections</h1>
+                    </section>
+                </section>
 
                 <section>
                     <section>
@@ -613,25 +613,181 @@ String shortest = items.stream()
                         <h1>Réflexion</h1>
                         <h1> &amp; introspection</h1>
                     </section>
+                    <section>
+                        <h2>Example</h2>
+                        <pre><code class="java" data-trim contenteditable>
+Class helloClass = HelloWorld.class;                            
+Method[] methods = helloClass.getMethods();
+for(Method method: methods) {
+    System.out.println(methods.getName());
+}
+                        </code></pre>
+
+                    </section>
+                    <section>
+                        <h2>Class</h2>
+                        <pre><code class="java" data-trim contenteditable>
+Class helloClass = HelloWorld.class;
+String fullClassName = helloClass.getName(); // fully qualified
+
+// sans le package                        
+Sring simpleClassName = helloClass.getSimpleName(); 
+                        </code></pre>
+                        <h3>modifiers</h3>
+                        <pre><code class="java" data-trim contenteditable>
+int modifiers = helloClass.getModifiers();
+
+// les modifiers sont encodés dans un int.
+// il faut passer par Modifier pour le décoder
+Modifier.isPublic(modifiers);
+Modifier.isFinal(modifiers);
+...                            
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Constructeur</h2>
+                        <pre><code class="java" data-trim contenteditable>
+Constructor[] constructors = helloClass.getConstructors();
+
+//le constructeur avec une String en paramêtre
+Constructor&lt;HelloWorld&gt; constructor = helloClass.getConstructors(new Class[]{String.class});
+
+                        </code></pre>
+                        <h3>instanciation</h3>
+                        <pre><code class="java" data-trim contenteditable>
+
+HelloWorld hello = constructor.newInstance("myArgs");                         
+                        </pre></code>
+                    </section>
+
+                    <section>
+                        <h2>fields</h2>
+                        <pre><code class="java" data-trim contenteditable>
+Field[] fields = helloClass.getFields();
+
+Field field = helloClass.getField("myField");
+Class fieldType = field.getType();
+
+
+HelloWorld hello = new HelloWorld();
+field.get(hello);
+field.set(hello, value);
+
+//pour un champ static
+someStaticField.set(null, value);
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Methods</h2>
+                        <pre><code class="java" data-trim contenteditable>
+Methods[] methods = helloClass.getMethods();
+
+// si HelloWorld a une methode myMethodName(String param)
+Method method = helloClass.getMethod("myMethodName", String.class)
+
+Class returnType = method.getReturnedType();
+Class[] paramTypes = method.getParameterTypes();
+
+
+method.invoke(hello, "first param");
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Méthodes et champs privés</h2>
+                        <p>Les méthodes getFields, getMethods précédentes ne retourne que les méthodes publiques. Pour toutes les avoir, il faut passer par: </p>
+                        <pre><code class="java" data-trim contenteditable>
+    helloClass.getDeclaredMethods();
+    helloClass.getDeclaredMethod("myPrivateMethodName", String.class);
+
+    helloClass.getDeclaredFields();
+    helloClass.getDeclaredField("myPrivateField");
+                        </code></pre>
+                        Pour invoquer une méthode privée ou changer une valeur d'un champ privé, il faut d'abord le rendre visible
+                        <pre><code class="java" data-trim contenteditable>
+    aPrivateField.setAccessible(true);
+    aPrivateMethod.setAccessible(true);
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>les arrays</h2>
+                        Il faut passer par la classe <code>Array</code>
+                        <pre><code class="java" data-trim contenteditable>
+int[] array = (int[]) Array.newInstance(int.class, 5);
+
+Array.set(array, 0, 42);
+Array.get(array, 0):
+
+String[] strings = new String[3];
+Class stringArrayClass = strings.getClass();
+Class stringArrayComponentType = stringArrayClass.getComponentType(); 
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>ClassLoader</h2>
+                        <p>Toutes les classes sont chargées par une instance de ClassLoader (pas forcemment la même pour toutes les classes).</p>
+                        <p>Les différent ClassLoader d'une application sont organisé de façon hierarchique.</p>
+                        <ol>
+                            <li>le CL regarde si la classe est déjà chargé</li>
+                            <li>Si non, il demande à son parent de le faire</li>
+                            <li>si le parent ne rouve pas la classe, il le fait lui même.</li>
+                        </ol>
+                    </section>
+                    <section>
+                        <h2>Dynamic ClassLoading</h2>
+                        <pre><code class="java" data-trim contenteditable>
+
+public class MyClass {
+
+  public static void main(String[] args) throws ClassNotFoundException {
+
+    ClassLoader classLoader = MyClass.class.getClassLoader();
+
+    Class clazz = classLoader.loadClass("fr.craftinglabs.training.java.ToLoad");
+}
+                        </code></pre>                        
+                    </section>
+                    <section>
+                        <h2>Dynamic reload</h2>
+                        <p>Vu que par défaut, un ClassLoader ne recharge pas une classe qu'il a déjà chargée, pour faire du reloading, il faut créer son propre ClassLoader</p>
+                        <p>Sauf que. Une même classe, chargé par deux ClassLoader différent est vu que deux classes distinctes (et non compatible).</p>
+                    </section>  
+                    <section>
+                        <h2>Proxy</h2>
+                        <p>La réflexion permet de créer dynamiquement des implmentations d'interface.</p>
+
+                        <pre><code class="java" data-trim contenteditable>
+//le truc vers qui seront transférer tous les appels
+InvocationHandler handler = new MyInvocationHandler();
+
+
+MyInterface proxy = (MyInterface) Proxy.newProxyInstance(
+                            MyInterface.class.getClassLoader(),
+                            new Class[] { MyInterface.class }, // la liste des interfaces à implémenter
+                            handler);
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Invocation handler</h2>
+                        <pre><code class="java" data-trim contenteditable>                      
+public interface InvocationHandler{
+  Object invoke(Object proxy, Method method, Object[] args)
+         throws Throwable;
+}
+
+                        </code></pre>
+                    </section>
                 </section>
                 
+
                 <section>
                     <section>
                         <h1>Annotations</h1>
                     </section>
-                    <section><h2>C'est quoi ?</h2>
-                        <ul>
-                            <li>des méta</li>
-                        </ul>
-                    </section>
-                    <section><h2>À quoi ça sert ?</h2>
-                        
-                    </section>
-                    <section><h2>Exemples classiques</h2>
-
-                    </section>
                     
-                    <section><h2>Format - utilisation</h2>
+                    <section>
+                        <h2>Format - utilisation</h2>
                         devant l'élement auquel il s'applique
                         <pre><code data-trim>
 @Author(name="Antoine", date="2016/04/04")
@@ -695,7 +851,7 @@ public @interface Author {
                         </ul>
                     </section>
                     <section><h2>Accès : runtime</h2>
-                        <pre><code data-trim>
+                        <pre><code data-trim class="java">
 ...                            
 Class classe = MyAnnotatedClass.class;
 Author author = (Author) classe.getAnnotation(Author.class);
@@ -706,7 +862,29 @@ if (author != null) {
                         </code></pre>
                     </section>
                     <section><h2>Accès : à la compil</h2>
-                        
+                        <p>Pour cela il faut créer un Processor qui s'occupera de gérer notre annotation</p>
+                        <p><code>AbstractProcessor fait une partie du boulot pour vous.</code></p>
+                        <pre><code data-trim class="java">
+public class MyProcessor extends AbstractProcessor {
+    @Override
+    public boolean process(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv) {
+        //process your annotation here
+        return true;
+    }
+}
+                        </code></pre>
+                        <p>On précise les annotation supportées par ce processor via une annotation</p>
+                        <pre><code data-trim class="java">
+@SupportedAnnotationTypes({"fr.craftinglabs.training.java.annotation.Print"})
+                        </code></pre>
+                    </section>  
+                    <section>
+                        <h2>Enregistrement</h2>
+                        <p>Pour être utilisé, il faut déclarer le processor. Il faut créer une fichier </p>
+                        <pre><code>
+META-INF/services/javax.annotation.processing.Processor
+</code></pre>
+                        <p>Il doit contenir le nom des classes de processor.</p>
                     </section>
                 </section>
 
