@@ -778,7 +778,43 @@ public interface InvocationHandler{
                         </code></pre>
                     </section>
                 </section>
-                
+ 
+<section>
+    <section>
+        <h1>Expérience</h1>
+    </section>
+    <section>
+
+        <h2>expérience 1</h2>
+        <p>Vous voyez quatre carte</p>
+
+<pre>
+                     ___    ___    ___    ___
+                    |   |  |   |  |   |  |   |
+                    | D |  | 7 |  | 5 |  | K |
+                    |___|  |___|  |___|  |___|
+</pre>
+        <p>Sur chaque carte, il y a un chiffre d'un côté, une lettre de l'autre</p>.
+        <br>
+        <p>Quelle(s) carte(s) faut-il retourner pour savoir si la règle suivante est vérifiée :<br>
+            S'il y a un D d'un côté, alors il y a 5 de l'autre ?</p>
+    </section>
+    <section>
+        <h2>expérience 2</h2>
+        <p>Quatres personnes sont dans un bar. Vous savez :</p>
+        <ol>
+            <li>La personne 1 boit une boisson alcoolisée.</li>
+            <li>La personne 2 à moins de 18 ans.</li>
+            <li>La personne 3 à plus de 18 ans.</li>
+            <li>La personne 4 boit une boisson non-alcoolisée?</li>
+        </ol>
+
+        <br>
+        <p>Quelle(s) personne(s) faut-il intéroger pour savoir si la règle suivante est vérifiée :<br>
+            Si un personne boit de l'alcool, elle doit avoir plus de 18 ans ?</p>
+    </section>
+</section>
+
 
                 <section>
                     <section>
@@ -837,7 +873,6 @@ public @interface Author {
                             <li>LOCAL_VARIABLE</li>
                             <li>METHOD</li>
                             <li>PARAMETER</li>
-                            <li>CLASS</li>
                             <li>PACKAGE</li>
                             <li>ANNOTATION_TYPE</li>
                             <li>TYPE : class, interface, enum ou annotation</li>
@@ -855,7 +890,7 @@ public @interface Author {
 Class classe = MyAnnotatedClass.class;
 Author author = (Author) classe.getAnnotation(Author.class);
 if (author != null) {
-        System.out.println("Author:" .author.name());
+        System.out.println("Author:" + author.name());
 }
 ...
                         </code></pre>
@@ -864,9 +899,11 @@ if (author != null) {
                         <p>Pour cela il faut créer un Processor qui s'occupera de gérer notre annotation</p>
                         <p><code>AbstractProcessor fait une partie du boulot pour vous.</code></p>
                         <pre><code data-trim class="java">
+@SupportedAnnotationTypes({"fr.craftinglabs.training.java.annotation.Print"})
 public class MyProcessor extends AbstractProcessor {
     @Override
-    public boolean process(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv) {
+    public boolean process(Set&lt;? extends TypeElement&gt; annotations, 
+                           RoundEnvironment roundEnv) {
         //process your annotation here
         return true;
     }
@@ -890,6 +927,43 @@ META-INF/services/javax.annotation.processing.Processor
  
                 <section>
                     <section><h2>(N)IO(2)</h2></section>
+                    <section><h2>IO / NIO</h2>
+                        <ul>
+                            <li>IO : historique, orienté stream, bloquant</li>
+                            <li>NIO : orienté buffer, non bloquant</li>
+                            <li>NIO2 : 1.7, dépoussiérage de l'API NIO</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>streams vs buffers</h2>
+                        <h3>streams</h3>
+                            <p>lecture d'un ou plusieurs octets depuis un stream.</p>
+                            <p>pas de mise en cache.</p>
+                            <p>impossible de remonter le flux.</p>
+                        <h3>buffers</h3>
+                            <p>lecture depuis un buffer que l'on accède comme on veux.</p>
+                            <p>le buffer contient il assez d'info pour être pertinent ?</p>
+                            <p>le buffer courant est écrasé à chaque lecture.</p>
+                    </section>
+
+                    <section>
+                        <h2>Non blocking IO</h2>
+                        <p>les opérations d'écriture/lecture sont non bloquantes. Il est donc possible de gérer des sources simultanés depuis un unique thread.</p>
+                    </section>
+
+                    <section>
+                        <h2>Cas d'usage ?</h2>
+                        <h3>Java IO</h3>
+                        <p>Peu de connexions.</p>
+                        <p>Beacoup de données.</p>
+                        <h3>Java NIO</h3>
+                        <p>Beaucoup de connexionx</p>
+                        <p>Peu de données.</p>
+                    </section>
+                    <section>
+                        <h2>Fichiers</h2>
+                        <p>Java 7 simplifie grandement l'utilisation de NIO pour la manipulation de fichier via Files et FileSystem.</p>
+                    </section>
                 </section>
                 <section>
                     <section><h2>Exceptions</h2></section>
@@ -900,8 +974,86 @@ META-INF/services/javax.annotation.processing.Processor
                     
                 <section>
                     <section>
-                        <h1>JPA</h1>
-                        <h3>&amp; hibertnate</h3>
+                        <h1>Java Persistence API</h1>
+                    </section>
+                    <section>
+                        <h2>JPA</h2>
+                        <p>JPA est une spécification dont l'objectif est d'uniformiser l'accès aux ORM.</p>
+                        <p>Il s'agit d'un ensemble d'interface du package <code>javax.persistence</code></p>
+                        <pre><code data-trim class="java">
+EntityManagerFactory managerFactory = Persistence.createEntityManagerFactory("persistenceUnit");
+EntityManager entityManager = managerFactory.createEntityManager();
+
+Employee employee = new Employee("John");
+entityManager.persist(employee);
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Intérêt</h2>
+                        <ul>
+                            <li>dispo dans JEE et Java SE</li>
+                            <li>Mapping objet relationnel avec la BD par annotations</li>
+                            <li>un langage de requêtage standardisé</li>
+                        </ul>
+                        <pre><code data-trim class="java">
+select e from Employee e order by e.nom asc
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Entités</h2>
+                        <pre><code data-trim class="java">
+public class Employee {
+@Id
+@GeneratedValue
+private Long id;
+
+private String name;
+// Accessors
+}
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Entity Manager Factory</h2>
+                        <p>Récupère les infos des Persistence Unit pour pouvoir créer des EntityManager.</p>
+                        <p>Dans un contexte JEE, il est fourni par le serveur d'application.</p>
+
+                        <h2>Entity Manager</h2>
+                        <p>gère les échanges entre le code et la BD. Ses actions sont généralement englobé dans des transactions.</p>
+                    </section>
+                    <section>
+                        <h2>Relations entre entités</h2>
+                        <pre><code data-trim class="java">
+public class Employee {
+    //...
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "adresse", unique = true, nullable = false)
+    private Adresse adresse;
+    //...
+                        </code></pre> 
+                        <pre><code data-trim class="java">
+public class Adresse {
+    // optionnel
+    @OneToOne(mappedBy = "adresse")
+    private Employee personne;
+    //...
+                        </code></pre> 
+                    </section>
+                            <section>
+                        <h2>Relations entre entités</h2>
+                        <pre><code data-trim class="java">
+public class Employee {
+//...
+    @ManyToOne
+    private Department department;
+//...
+                        </code></pre> 
+                        <pre><code data-trim class="java">
+public class Departement {
+
+@OneToMany
+private List&lt;Employee&gt; employees = new ArrayList&lt;&gt;();
+//...
+                        </code></pre> 
                     </section>
                 </section>
 
@@ -913,8 +1065,100 @@ META-INF/services/javax.annotation.processing.Processor
                 </section>
                 <section>
                     <section>
-                        <h1>Threads</h1>    
+                        <h1>Concurence</h1>    
                     </section>
+                    <section>
+                        <h2>C'est quoi ?</h2>
+                        <p>C'est faire tourner plusieurs programme ou partie d'un programme en parallèle.</p>
+                        <p>Avec le nombre de processeur/croissant dans nos machines, ne pas en tirer partie semble dommage.</p>
+                    </section>
+
+                    <section>
+                        <h2>Problèmes</h2>
+                        <ul>
+                            <li>tous n'est pas parallélisable</li>
+                            <li>il y a toujours un léger overhead à la parallélisation</li>
+                            <li>visibilité des changements de données entre threads</li>
+                            <li>accès concurrent</li>
+                            <li>deadlock</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Thread</h2>
+                        <p>Il est dépendant du processus qui l'a crée.</p>
+                        <p>Il peut partager des éléments avec d'autres Thread (provenant du même processus).</p>
+                        <p>Chaque Thread à son propre cache mémoire pour les données partagées.</p>
+                    </section>
+                    <section>
+                        <h2>Créer un thread</h2>
+                        <pre><code data-trim class="java">
+Thread t = new Thread(new MyThreadedCode());
+t.start();
+                        </code></pre>
+                        <pre><code data-trim class="java">
+public class MyThreadedCode implements Runnable {
+    public void run() {
+        System.out.println("Runs in a thread.");
+    }
+}
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>synchronized</h2>
+                        <p>Mot clé du langage, il s'applique à des blocs de code.</p>
+                        <p>Un bloc synchronized ne peut être accéder que par un seul thread à la fois.</p>
+                        <p>Un thread qui entre dans un bloc synchronized est sur de voir les modifications faites par celui qui vient d'en sortir.</p>
+                    </section>
+
+                    <section>
+                        <h2>volatile</h2>
+                        <p>Mot clé du langage, il s'applique à aux variables de classe.</p>
+                        <p>Tout thread lisant une variable est sur d'en voir la dernière version.</p>
+                    </section>
+
+                    <section>
+                        <h2>Les classes Atomic</h2>
+                        <p>Ensemble de wrapper de type primitives Thread safe et sans lock.</p>
+
+                        <h2>java.util.concurrent</h2>
+                        <p>Propose des constructions Thread safe pour les Collections.</p>
+                        <p>Note : si elles sont Thread safe, les opérations ne sont pas forcemment atomique.</p>
+                    </section>
+
+                    <section>
+                        <h2>Thread et Executors</h2>
+                        <p>Les Threads sont coûteux à créer et démarrer. Les Executors sont des pools de Thread.</p>
+                        <pre><code data-trim class="java">
+
+List&lt;Runnable&gt; runnables = new ArrayList&lt;Runnable&gt;();
+// mettre des runables dans runnables        
+
+ExecutorService execute = Executors.newFixedThreadPool(10);
+for(Runnable r : runnables){
+    service.execute(r);
+}
+service.shutdown();
+                        </code></pre>
+                    </section>
+
+                    <section><h2>Callable et Future</h2>
+                        <p>La méthode run() d'un Runnable, ne retourne rien, </p>
+                        <pre><code data-trim class="java">
+public interface Callable&lt;V&gt; {
+    public V call() throws Exception;
+}
+
+ExecutorService execute = Executors.newSingleThreadExecutor();  
+Future&lt;Integer&gt; future = execute.submit(new MonCallable());
+
+future.get(); // bloquant, attend que le Callable est rendu son résultat.
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Immutabilité</h2>
+                        <p>un des grosses difficultés de la concurrence est la gestion des changements d'états des données partagées. Si ces données deviennent immutable, les problèmes disparaissent, non ?</p>
+                    </section>
+
                 </section>
 
 </div>
