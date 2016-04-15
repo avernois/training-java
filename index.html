@@ -970,7 +970,71 @@ META-INF/services/javax.annotation.processing.Processor
                 </section>
                 <section>
                     <section><h1>date et timezones</h1></section>
+                    <section>
+                        <h2>JSR 310</h2>
+                        <p>Pendant longtemps, la gestion des dates/times en java était un enfer.</p>
+                        <p>Depuis Java 7 et la JSR310, les choses se sont améliorées.</p>
+
+                        <p>Toutes les objets Date/Time sont immutables.</p>
+                    </section>
+
+                    <section>
+                        <h2>LocalTime LocalDate</h2>
+                        <p>Local* représentent la moment du point de vue de celui qui la demande. Il n'y a aucune info de timezone. C'est l'heure/date, à l'endroit où le système s'exécute.</p>
+                        <pre><code data-trim class="java">
+LocalDate date = LocalDate.now();
+LocalDateTime dateTime = LocalDateTime.parse("2015-12-14T16:12:17");
+LocalTime time = LocalTime.of(17,18);
+
+time.getHour();
+date.getMonth(); retourne un enum
+date.getMonthValue();
+
+date.getDayOfYear();
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Ajustement</h2>
+                        <pre><code data-trim class="java">
+LocalDateTime another = dateTime.withDayOfMonth(15).withYear(2016);
+LocalDateTime yetAnother = dateTime.plusWeeks(3).plus(4, WEEKS);
+
+// import static java.time.temporal.TemporalAdjusters.*;
+LocalDateTime ldt = dateTime.with(lastInMonth(TUESDAY));
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>TimeZone</h2>
+                        
+                        <ul>
+                            <li>ZonedDateTime: un DateTime associé à une TimeZone.</li>
+                            <li>OffsetTime: avec un offset, mais sans la zone</li>
+                            <li>OffsetDateTime</li>
+                        </ul>
+                        <pre><code data-trim class="java">
+ZonedDateTime zoned = ZonedDateTime.of(dateTime, id);
+ZonedDateTime.parse("2016-04-14T22:30:30+02:00[Europe/Paris]");
+
+OffsetDateTime time = OffsetDateTime.now(ZoneId.of("Europe/Paris"));
+time = time.withOffsetSameInstant(ZoneOffset.of("+04:00"));
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>ZoneId et ZoneOffset</h2>
+                        <ul>
+                            <li>ZoneOffset: le décalage par rapport à GMT/UTC</li>
+                            <li>ZoneId : l'identifiant de TimeZone (ex: "Europe/Paris")</li>
+                        </ul>
+                        <p>Par défaut, la JVM utilise les ZoneId défini par l'IANA. Il en existe 2 autres : les ZoneId de l'IATA (basé sur les code aéroport) et ceux de Microsoft.</p>
+                        <p>La config semble se faire du côté de <a href="https://docs.oracle.com/javase/8/docs/api/java/time/zone/ZoneRulesProvider.html">ZoneRulesProvider</a></p>
+                    </section>
+                    <section>
+                        <h2>charset</h2>
+                        <p>La plupart des méthodes qui manipulent des String peuvent prendre un Charset en paramètre.</p>
+                    </section>
                 </section>
+
+
                     
                 <section>
                     <section>
@@ -1161,6 +1225,17 @@ future.get(); // bloquant, attend que le Callable est rendu son résultat.
 
                 </section>
 
+                <section>
+                    <section>
+                    <h1>Some rest server</h1>
+                    </section>
+
+                    <section>
+                        <h2>JAX RS &amp; Jersey</h2>
+                        <p>Une API standardisée pour créer des services REST.</p>
+                        <p>Jersey : l'implementation de référence de JAX RS.</p>
+                    </section>
+                </section>
 </div>
 
 </div>
